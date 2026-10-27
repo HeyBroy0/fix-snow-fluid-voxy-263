@@ -19,17 +19,20 @@ jobs:
           distribution: temurin
           java-version: '25'
 
-      - name: Set up Gradle 9.6.0
-        uses: gradle/actions/setup-gradle@v6
-        with:
-          gradle-version: '9.6.0'
-          cache-provider: basic
-
+      # Unpack the Gradle project before setting up Gradle. The project is
+      # uploaded as a ZIP, rather than stored as Gradle files in the repo.
       - name: Extract source project
         run: |
           test -f voxy-snow-fluid-fix-source.zip
           mkdir source
           unzip -q voxy-snow-fluid-fix-source.zip -d source
+
+      - name: Set up Gradle 9.6.0
+        uses: gradle/actions/setup-gradle@v6
+        with:
+          gradle-version: '9.6.0'
+          # Avoid cache fingerprinting for a project unpacked from a ZIP.
+          cache-disabled: true
 
       - name: Build mod JAR
         run: gradle -p source/voxy-snow-fluid-fix build --no-daemon
