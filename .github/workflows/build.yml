@@ -27,6 +27,13 @@ jobs:
           mkdir source
           unzip -q voxy-snow-fluid-fix-source.zip -d source
 
+      # Minecraft 26.3 uses Loom's non-obfuscated setup, where Fabric Loader
+      # should be on implementation, not the older modImplementation configuration.
+      - name: Adjust Fabric Loader dependency for Minecraft 26.3
+        run: |
+          sed -i 's/modImplementation "net.fabricmc:fabric-loader:/implementation "net.fabricmc:fabric-loader:/' source/voxy-snow-fluid-fix/build.gradle
+          grep -n 'net.fabricmc:fabric-loader' source/voxy-snow-fluid-fix/build.gradle
+
       - name: Set up Gradle 9.8.0
         uses: gradle/actions/setup-gradle@v6
         with:
